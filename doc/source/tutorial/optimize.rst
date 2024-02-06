@@ -748,13 +748,13 @@ and the gradient with finite differences.
 
 
 .. [TRIP] Byrd, Richard H., Mary E. Hribar, and Jorge Nocedal. 1999.
-    An interior point algorithm for large-scale nonlinear  programming.
+    An interior point algorithm for large-scale nonlinear programming.
     SIAM Journal on Optimization 9.4: 877-900.
 .. [EQSQP] Lalee, Marucha, Jorge Nocedal, and Todd Plantega. 1998. On the
     implementation of an algorithm for large-scale equality constrained
     optimization. SIAM Journal on Optimization 8.3: 682-706.
 
-Sequential Least SQuares Programming (SLSQP) Algorithm (``method='SLSQP'``)
+Sequential Least Squares Programming (SLSQP) Algorithm (``method='SLSQP'``)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The SLSQP method deals with constrained minimization problems of the form:
 
@@ -800,6 +800,188 @@ And the optimization problem is solved with:
 
 Most of the options available for the method ``'trust-constr'`` are not available
 for ``'SLSQP'``.
+
+Comparison of local (multivariate) optimization methods from :func:`minimize`
+------------------------------------------------------------------------------
+Optimization methods from :func:`minimize`, which solve problems of the form :math:`\min_x f(x)` where :math:`x\in\mathbf{R}^n`
+and :math:`f \: : \: \mathbf{R}^n \rightarrow \mathbf{R}`
+
+The table below compares the characteristics of all :func:`minimize` optimization methods:
+
+.. list-table:: Optimization methods from :func:`minimize`
+   :widths: 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5
+   :header-rows: 1
+   :name: optimization-table
+
+   * -
+     - ``Nelder-Mead``
+     - ``Powell``
+     - ``COBLYLA``
+     - ``CG``
+     - ``BFGS``
+     - ``L-BFGS-G``
+     - ``SLSQP``
+     - ``TNC``
+     - ``Newton-CG``
+     - ``dogleg``
+     - ``trust-ncg``
+     - ``trust-exact``
+     - ``trust-Krylov``
+     - ``trust-constr``
+   * - First derivatives
+     -
+     -
+     -
+     - ✓
+     - ✓
+     - ✓
+     - ✓
+     - ✓
+     - ✓
+     - ✓
+     - ✓
+     - ✓
+     - ✓
+     - ✓
+   * - Second derivatives
+     -
+     -
+     -
+     -
+     - ~
+     - ~
+     - ~
+     - ✓
+     - ✓
+     - ✓
+     - ✓
+     - ✓
+     - ✓
+     - ✓
+   * - Iterative Hessian factorization
+     -
+     -
+     -
+     -
+     -
+     -
+     -
+     - ✓
+     - ✓
+     -
+     - ✓
+     -
+     - ✓
+     - ?
+   * - Local convergence
+     -
+     -
+     -
+     - L
+     - S
+     - L
+     - S
+     - S*
+     - S*
+     - Q
+     - S*
+     - Q
+     - S*
+     - ?
+   * - Global convergence
+     -
+     -
+     -
+     -
+     - ✓
+     - ✓
+     - ✓
+     - ✓
+     - ✓
+     - ✓
+     - ✓
+     - ✓
+     - ✓
+     - ✓
+   * - Trust region
+     - Neither
+     - LS
+     - TR
+     - LS
+     - LS
+     - LS
+     - LS
+     - LS
+     - LS
+     - TR
+     - TR
+     - TR
+     - TR
+     - TR
+   * - Bound constraints
+     -
+     -
+     -
+     -
+     -
+     - ✓
+     - ✓
+     - ✓
+     - ✓
+     -
+     -
+     -
+     -
+     - ✓
+   * - Equality constraints
+     -
+     -
+     -
+     -
+     -
+     -
+     - ✓
+     -
+     -
+     -
+     -
+     -
+     -
+     - ✓
+   * - Inequality constraints
+     -
+     -
+     - ✓
+     -
+     -
+     -
+     - ✓
+     -
+     -
+     -
+     -
+     -
+     -
+     - ✓
+
+.. list-table:: 
+   :widths: 5 35
+   :header-rows: 1
+
+   * - 
+     - Description
+   * - First derivatives / Second derivatives
+     - Indicates whether first or second order derivatives are required. When 'second derivatives' is flagged with '~', the algorithm accepts but does not require second-order derivatives from the user; it computes an approximation internally and uses it to accelerate method convergence.
+   * - Iterative Hessian factorization
+     - Denotes algorithms that factorize the Hessian in an iterative way, which does not require explicit matrix factorization or storage of the Hessian.
+   * - Local convergence
+     - Gives a lower bound on the rate of convergence of the iteration sequence once the iterate is sufficiently close to the solution: linear (L), superlinear (S) and quadratic (Q). Convergence rates denoted S* indicate that the algorithm has a superlinear rate for the parameters used in SciPy, but can achieve a quadratic convergence rate with other parameter choices.
+   * - Global convergence
+     - Indicates algorithms with guarantees of convergence to a stationary point (that is, a point :math:`x*` for which :math:`\nabla f \left(x^* \right) = 0`); this is not a guarantee of convergence to a global minimum.
+   * - Globalization Approach
+     - Indicates which of the two globalization approaches is used by the algorithm, 'lines-search' (LS) or 'trust-region' (TR).
+   * - Bound constraints /Equality constaints / Inequality constraints
+     - Indicates which algorithms can deal with constraints on the variables. We distinguish among bound constraints :math:`(\mathbf{x}^{l}\le\mathbf{x}\le\mathbf{x}^{u})`, equality constraints :math:`(c_{\mbox{eq}}\left(\mathbf{x}\right) = 0)`, and inequality constraints :math:`(c_{\mbox{ineq}}\left(\mathbf{x}\right)\ge0)`.
 
 Global optimization
 -------------------
